@@ -1,7 +1,8 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from icalendar import Calendar, Event, vDatetime
 from auth_info import auth_info
+import collections
 
 
 def auth_with_csrf_token():
@@ -65,6 +66,10 @@ def get_list_from_file(filename: str):
     return online_list
 
 
+def is_equals_dates(d1, d2):
+    return d1.day == d2.day and d2.month == d1.month and d1.year == d2.year
+
+
 def main():
     calendar_text = open_ics_file()
     week_calendar = Calendar.from_ical(calendar_text)
@@ -74,19 +79,31 @@ def main():
     week_calendar.subcomponents = [x for x in week_calendar.subcomponents
                                    if x['CATEGORIES'][1].cats[0] not in ignored_subjects]
     for ev in week_calendar.subcomponents:
-        # subject = ev['CATEGORIES'][1].cats[0]
-        # pair_type = ev['CATEGORIES'][0].cats[0]
+        is_online = ev['LOCATION'] == 'Microsoft Teams'
         event_datetime = ev['DTSTART'].dt
-        # print(subject)
-        # print(pair_type)
-        # print(event_datetime)
         event_date = event_datetime.date()
-        event_time = event_datetime.time()
-        if event_date in calendar_dates:
-            if event_time < calendar_dates[event_date]:
-                calendar_dates[event_date] = event_time
+        event_time = event_datetime
+        if is_online:
+            event_time += timedelta(hours=2)
+        is_have_not_that_date = event_date not in calendar_dates
+        is_it_best_time = is_have_not_that_date or event_time < calendar_dates[event_date]
+        if is_it_best_time:
+            calendar_dates[event_date] = event_time
+    sorted_dates = collections.OrderedDict(sorted(calendar_dates.items()))
+    today = datetime.now()
+    for date, event_time in sorted_dates.items():
+        wake_up_time = event_time - timedelta(hours=2)
+        fall_asleep_time = wake_up_time - timedelta(hours=8)
 
-    print(week_calendar.subcomponents)
+        if is_equals_dates(today, date):
+            print(fall_asleep_time.strftime('сегодня ложись в %H:%M'))
+            print(date.strftime('сегодня вставай в ')+wake_up_time.strftime('%H:%M'))
+        elif is_equals_dates(today+timedelta(days=1), date):
+            print(fall_asleep_time.strftime('завтра ложись в %H:%M'))
+            print(date.strftime('завтра вставай в ')+wake_up_time.strftime('%H:%M'))
+        else:
+            print(fall_asleep_time.strftime('%d ложись в %H:%M'))
+            print(date.strftime('%d вставай в ')+wake_up_time.strftime('%H:%M'))
 
 
 if __name__ == "__main__":
