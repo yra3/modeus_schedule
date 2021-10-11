@@ -1,0 +1,19 @@
+BEGIN:VEVENT
+UID:0c0d147c-c151-4e53-8287-53dba976616e
+SEQUENCE:2
+ORGANIZER;CN=Modeus:MAILTO:help@modeus.org
+DTSTAMP;TZID=Asia/Yekaterinburg:20211011T140319
+DTSTART;TZID=Asia/Yekaterinburg:20211012T173000
+DTEND;TZID=Asia/Yekaterinburg:20211012T190000
+SUMMARY:Красота и здоровье голоса / Психология голоса / КЗГолос П-01
+LOCATION:УЛК-04 / 322 (УЛК-04)
+DESCRIPTION:Практическое занятие / Тренинг\n\nПреподаватель: Куприянова Ася Ильинична\n\nПосмотреть в полной версии: https://utmn.modeus.org/schedule-calendar/my?selectedEvent=%7B%22eventId%22:%220c0d147c-c151-4e53-8287-53dba976616e%22%7D&calendar=%7B%22view%22:%22agendaWeek%22\,%22date%22:%222021-10-12T17:30:00.000Z%22%7D\nПосмотреть в мобильной версии: https://m-utmn.modeus.org/#/event/0c0d147c-c151-4e53-8287-53dba976616e\n
+CATEGORIES:Практическое занятие
+CATEGORIES:КЗГолос
+END:VEVENT
+
+
+DTSTAMP;TZID=Asia/Yekaterinburg:2021 10 11 T14:03:19
+DTSTART;TZID=Asia/Yekaterinburg:2021 10 12 T17:30:00
+DTEND;TZID=Asia/Yekaterinburg:  2021 10 12 T19:00:00
+
