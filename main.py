@@ -73,7 +73,6 @@ def is_equals_dates(d1, d2):
 def main():
     calendar_text = open_ics_file()
     week_calendar = Calendar.from_ical(calendar_text)
-    online_subjects = get_list_from_file('online_pairs.txt')
     ignored_subjects = get_list_from_file('ignored_pairs.txt')
     calendar_dates = {}
     week_calendar.subcomponents = [x for x in week_calendar.subcomponents
@@ -94,16 +93,19 @@ def main():
     for date, event_time in sorted_dates.items():
         wake_up_time = event_time - timedelta(hours=2)
         fall_asleep_time = wake_up_time - timedelta(hours=8)
-
+        if today.day >= date.day and today.month >= date.month and today.month >= date.month:
+            continue
         if is_equals_dates(today, date):
-            print(fall_asleep_time.strftime('сегодня ложись в %H:%M'))
-            print(date.strftime('сегодня вставай в ')+wake_up_time.strftime('%H:%M'))
+            if today.hour < fall_asleep_time.hour:
+                print(fall_asleep_time.strftime('сегодня ложись в %H:%M'))
+            if today.hour < wake_up_time.hour:
+                print(date.strftime('сегодня вставай в ') + wake_up_time.strftime('%H:%M'))
         elif is_equals_dates(today+timedelta(days=1), date):
             print(fall_asleep_time.strftime('завтра ложись в %H:%M'))
-            print(date.strftime('завтра вставай в ')+wake_up_time.strftime('%H:%M'))
+            print(date.strftime('завтра вставай в ') + wake_up_time.strftime('%H:%M'))
         else:
             print(fall_asleep_time.strftime('%d ложись в %H:%M'))
-            print(date.strftime('%d вставай в ')+wake_up_time.strftime('%H:%M'))
+            print(date.strftime('%d вставай в ') + wake_up_time.strftime('%H:%M'))
 
 
 if __name__ == "__main__":
