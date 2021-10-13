@@ -1,14 +1,19 @@
 import os
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-from auth_info import auth_info
 from sys import platform
-# waiting js
+
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as conditions
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
+from auth_info import auth_info
+
+# waiting js
+DEBUG = False
 
 
 def open_modeus(browser, login, password):
@@ -25,7 +30,19 @@ def open_modeus(browser, login, password):
     browser.find_element(by='id', value='submitButton').click()
 
 
-def download_schedule():
+def click_download_button(browser, sleep_time):
+    actions = ActionChains(browser)
+    try:
+        download_button = WebDriverWait(browser, 30).until(
+            conditions.presence_of_element_located((By.CLASS_NAME, "icon-icalendar"))
+        )
+        actions.move_to_element(download_button).click().perform()
+    except TimeoutException:
+        print("Кнопочка грузись быстрей!!!")
+    time.sleep(sleep_time)
+
+
+def download_schedule(count_weeks: int = 1):
     # declare driver file path for different systems
     dir_name = os.path.dirname(__file__)
     if platform == "linux" or platform == "linux2":
@@ -36,7 +53,8 @@ def download_schedule():
     # set browser options
     service = Service(chrome_driver)
     options = webdriver.ChromeOptions()
-    # options.add_argument('headless')  # для открытия headless-браузера
+    if not DEBUG:
+        options.add_argument('headless')  # для открытия headless-браузера
     # set download folder
     schedule_dir = os.path.join(dir_name, "schedule_ics_files")
     preferences = {"download.default_directory": schedule_dir}
@@ -45,47 +63,26 @@ def download_schedule():
     with webdriver.Chrome(options=options, service=service) as browser:
         browser.implicitly_wait(30)
         open_modeus(browser, auth_info['login'], auth_info['password'])
-        actions = ActionChains(browser)
+
         # download ics file for this week
+        while not os.listdir(schedule_dir):
+            click_download_button(browser, 0.5)
 
-        download_button = browser.find_element(by=By.CLASS_NAME, value='icon-icalendar')
-        actions.move_to_element(download_button).click().perform()
-        # time.sleep(3)
-        # try:
-        #     element = WebDriverWait(browser, 30).until(
-        #         EC.presence_of_element_located((By.CLASS_NAME, "icon-icalendar"))
-        #     )
-        #     download_button = browser.find_element(by=By.CLASS_NAME, value='icon-icalendar')
-        #     actions.move_to_element(download_button).click().perform()
-        # except:
-        #     print("Fuck")
+        for number_week in range(count_weeks - 1):
+            actions = ActionChains(browser)
+            # move to next page button and click. move to next week
+            try:
+                next_page_button = WebDriverWait(browser, 30).until(
+                    conditions.presence_of_element_located((By.CLASS_NAME, "fc-next-button"))
+                )
+                actions.move_to_element(next_page_button).click().perform()
+            except TimeoutException:
+                print("Упс, модеус не прогрузился(((")
 
-        # move to next page button and click. move to next week
-        next_page_button = browser.find_element(by=By.CLASS_NAME, value='fc-next-button')
-        actions.move_to_element(next_page_button).click().perform()
-        # try:
-        #     element = WebDriverWait(browser, 30).until(
-        #         EC.presence_of_element_located((By.CLASS_NAME, "fc-next-button"))
-        #     )
-        #     next_page_button = browser.find_element(by=By.CLASS_NAME, value='fc-next-button')
-        #     actions.move_to_element(next_page_button).click().perform()
-        # except:
-        #     print("Fuck")
+            # download ics file for i week
+            while len(os.listdir(schedule_dir)) < number_week + 2:
+                click_download_button(browser, 0.5)
 
-        # download ics file for next week
-        download_button = browser.find_element(by=By.CLASS_NAME, value='icon-icalendar')
-        actions.move_to_element(download_button).click().perform()
-        # try:
-        #     element = WebDriverWait(browser, 30).until(
-        #         EC.presence_of_element_located((By.CLASS_NAME, "icon-icalendar"))
-        #     )
-        #     download_button = browser.find_element(by=By.CLASS_NAME, value='icon-icalendar')
-        #     actions.move_to_element(download_button).click().perform()
-        # except:
-        #     print("Fuck")
-
-        # waiting for download
-        time.sleep(10)
         browser.close()
 
     for i, filename in enumerate(os.listdir(schedule_dir)):

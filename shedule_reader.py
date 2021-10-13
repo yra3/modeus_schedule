@@ -25,7 +25,6 @@ def is_equals_dates(d1, d2):
 def display_sleep_and_fall_up_times():
     root_dir_name = os.path.dirname(__file__)
     schedule_dir = os.path.join(root_dir_name, "schedule_ics_files")
-    # print(os.listdir(schedule_dir))
     schedule_filename = os.path.join(schedule_dir, os.listdir(schedule_dir)[0])
     calendar_text = read_ics_file(schedule_filename)  # TODO: add find filename method
     week_calendar = Calendar.from_ical(calendar_text)
