@@ -1,10 +1,10 @@
-1. download chromedriver for your version of chrome browser. Create in root programm folder subfolder with name "chromedriver_linux64" or "chromedriver_win32". Move chromedriver to this new folder
-2. create python virtual environment for the programm and activate it
+1. download chromedriver for your version of chrome browser. Create in root program folder subfolder with name "chromedriver_linux64" or "chromedriver_win32". Move chromedriver to this new folder
+2. create python virtual environment for the program and activate it
 3. install required python packages:
  selenium
  icalendar
-4. create file "auth_info.py" in programm root folder and write your data in following format:
+4. create file "auth_info.py" in program root folder and write your data in following format:
 auth_info = {'login': '<your_modeus_login>', 'password': '<your_modeus_password>'}
-# EXEMPLE auth_info = {'login': '0000541856@study.utmn.ru', 'password': '4D83f9234'}
-5. Write names of subjects that must be ignored in "ignored_pairs.txt" file. Each subject must be wrote in new line
-6. Execute main.py file. (Enjoy)
+# EXAMPLE auth_info = {'login': '0000541856@study.utmn.ru', 'password': '4D83f9234'}
+5. Write names of subjects that should be ignored in "ignored_pairs.txt" file. Each subject must be written in new line
+6. Execute main.py file. (Enjoy it)
